@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c7ck0th362fen"]
+
+[ext_resource type="Script" uid="uid://b4a0sum2l35sk" path="res://autoloads/debug_profiler.gd" id="1_nqj26"]
+
+[node name="DebugProfiler" type="Node" unique_id=1963980369]
+script = ExtResource("1_nqj26")
