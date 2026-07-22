@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://ciy2uc5bg3klb"]
+
+[ext_resource type="Script" uid="uid://bd8lwg5tjcgpm" path="res://src/characters/player/player_controller_data_vis.gd" id="1_7un56"]
+
+[node name="PlayerControllerDataVis" type="Node" unique_id=2396886]
+script = ExtResource("1_7un56")

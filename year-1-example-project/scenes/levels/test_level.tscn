@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c061kasapoar8"]
 
 [ext_resource type="PackedScene" uid="uid://gonnjwajp1hi" path="res://scenes/player/player.tscn" id="1_jbqir"]
+[ext_resource type="Material" uid="uid://cx5vlmgy8lcru" path="res://assets/materials/platform_material_3d.tres" id="2_yautc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hsoxx"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -45,8 +46,9 @@ shape = SubResource("ConcavePolygonShape3D_jbqir")
 [node name="Player" parent="." unique_id=1443877702 instance=ExtResource("1_jbqir")]
 
 [node name="Platform" type="MeshInstance3D" parent="." unique_id=1158306738]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7245426, 0.57225895, -4.989026)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9881473, 1.0084758, -4.989026)
 mesh = SubResource("BoxMesh_jbqir")
+surface_material_override/0 = ExtResource("2_yautc")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Platform" unique_id=291517528]
 
@@ -54,8 +56,9 @@ mesh = SubResource("BoxMesh_jbqir")
 shape = SubResource("ConcavePolygonShape3D_yautc")
 
 [node name="Platform2" type="MeshInstance3D" parent="." unique_id=38077145]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.974859, 0.57225895, -4.989026)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.974859, 0.546957, -4.989026)
 mesh = SubResource("BoxMesh_jbqir")
+surface_material_override/0 = ExtResource("2_yautc")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Platform2" unique_id=1797939280]
 

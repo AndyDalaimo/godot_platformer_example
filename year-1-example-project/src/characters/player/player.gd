@@ -1,3 +1,4 @@
+class_name Player
 extends CharacterBody3D
 
 enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
@@ -7,11 +8,13 @@ enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
 @export var _jump_velocity: float = 4.5 ## Jump velocity
 @export_range(0, 1.0, 0.1) var _air_control_coefficient: float = 0.7 ## How fast the Player can move in air
 @export_range(0.1, 1.0, 0.05) var _air_control_coyote_timer: float = 0.3 ## Coyote Timer will adjust how long it takes for Movement State to change to "FALLING" and trigger air_control_coefficient
+@export_range(0, 1.0, 0.1) var _acceleration_lerp_weight: float = 0.5
 
 @export_category("Player Controller Properties")
 @export_range(0.001, 0.01, 0.001) var _camera_sens: float = 0.003 ## Camera Sensitivity Coefficient
 @export_range(25.0, 70.0, 5.0) var _camera_limit_deg: float = 40.0 ## Limit camera degree to not rotate around player on X-Axis
 @export_range(0.2, 1.0, 0.1) var _camera_lag_weight: float = 0.2 ## Lerps Camera Pivot Node onto correct Player position. A lower weight will increase Lag. Capped to not allow player to run past SpringArm
+
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -28,6 +31,8 @@ var _run_tilt: float = 0.0
 var _movement_strength: float = 0.0
 var _movement_state: MOVEMENT_STATE
 
+## Data vis 
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -42,6 +47,9 @@ func _input(event: InputEvent) -> void:
 		_movement_state = MOVEMENT_STATE.JUMP
 		await get_tree().create_timer(_air_control_coyote_timer).timeout
 		_movement_state = MOVEMENT_STATE.FALL
+		
+		print("Jump Height: ", absf((pow(_jump_velocity, 2)) / (2 * get_gravity().y))) ## Calculating Jump height for better data Vis
+		print("Jump Distance: ", )
 	
 
 func _physics_process(delta: float) -> void:
@@ -65,8 +73,11 @@ func _physics_process(delta: float) -> void:
 			# _movement_strength = _movement_strength * _air_control_coefficient ## Fix movement strength inline with air control while player is not grounded
 		
 	if direction:
-		velocity.x = direction.x * SPEED * _movement_strength
-		velocity.z = direction.z * SPEED * _movement_strength
+		## TESTING -> Still messing with Acceleration Lerp   
+		velocity.x = lerpf(velocity.x, direction.x * SPEED * _movement_strength, _acceleration_lerp_weight) 
+		velocity.z = lerpf(velocity.z, direction.z * SPEED * _movement_strength, _acceleration_lerp_weight)
+		#velocity.x = direction.x * SPEED * _movement_strength
+		#velocity.z = direction.z * SPEED * _movement_strength
 		#_run_tilt = velocity.x / SPEED
 		#if direction.z > -.7 and direction.z < .7:
 			##_run_tilt = lerpf(_run_tilt, 0.0, delta)
