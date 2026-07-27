@@ -1,6 +1,8 @@
 class_name Player
 extends CharacterBody3D
 
+signal jump
+
 enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
 
 @export_category("Movement Properties")
@@ -27,7 +29,7 @@ const JUMP_VELOCITY = 4.5
 @onready var camera_3d: Camera3D = %Camera3D
 
 ## Variable Player Movement properties
-var _run_tilt: float = 0.0
+## var _run_tilt: float = 0.0
 var _movement_strength: float = 0.0
 var _movement_state: MOVEMENT_STATE
 
@@ -43,14 +45,10 @@ func _input(event: InputEvent) -> void:
 	## Handle Jump
 	if event.is_action_pressed("jump") and is_on_floor():
 		velocity.y = _jump_velocity
-		#anim_state_machine.travel("up")
+		jump.emit()
 		_movement_state = MOVEMENT_STATE.JUMP
 		await get_tree().create_timer(_air_control_coyote_timer).timeout
 		_movement_state = MOVEMENT_STATE.FALL
-		
-		print("Jump Height: ", absf((pow(_jump_velocity, 2)) / (2 * get_gravity().y))) ## Calculating Jump height for better data Vis
-		print("Jump Distance: ", )
-	
 
 func _physics_process(delta: float) -> void:
 	## Camera lerp to player position
