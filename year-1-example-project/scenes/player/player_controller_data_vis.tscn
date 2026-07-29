@@ -20,5 +20,5 @@ surface_material_override/0 = SubResource("StandardMaterial3D_7un56")
 
 [node name="DebugJumpTimer" type="Timer" parent="." unique_id=395545491]
 unique_name_in_owner = true
-wait_time = 3.0
+wait_time = 5.0
 one_shot = true

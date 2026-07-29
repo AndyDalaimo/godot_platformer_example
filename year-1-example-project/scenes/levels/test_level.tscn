@@ -44,6 +44,8 @@ mesh = SubResource("PlaneMesh_rm7t1")
 shape = SubResource("ConcavePolygonShape3D_jbqir")
 
 [node name="Player" parent="." unique_id=1443877702 instance=ExtResource("1_jbqir")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07004738, 0)
+_held_jump_movement_offset = 0.7
 
 [node name="Platform" type="MeshInstance3D" parent="." unique_id=1158306738]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9881473, 1.0084758, -4.989026)
@@ -53,6 +55,16 @@ surface_material_override/0 = ExtResource("2_yautc")
 [node name="StaticBody3D" type="StaticBody3D" parent="Platform" unique_id=291517528]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Platform/StaticBody3D" unique_id=786258695]
+shape = SubResource("ConcavePolygonShape3D_yautc")
+
+[node name="Platform3" type="MeshInstance3D" parent="." unique_id=1969587359]
+transform = Transform3D(1, 0, 0, 0, 1.8614254, 0, 0, 0, 1, -6.854817, 1.8161783, -4.989026)
+mesh = SubResource("BoxMesh_jbqir")
+surface_material_override/0 = ExtResource("2_yautc")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Platform3" unique_id=32993992]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Platform3/StaticBody3D" unique_id=1396261596]
 shape = SubResource("ConcavePolygonShape3D_yautc")
 
 [node name="Platform2" type="MeshInstance3D" parent="." unique_id=38077145]

@@ -1,18 +1,24 @@
 class_name Player
 extends CharacterBody3D
 
-signal jump
+signal jump_signal
 
 enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
 
 @export_category("Movement Properties")
 @export var _rotation_speed: float = TAU * 2 ## How fast the player Model can rotate around 
-@export var _jump_velocity: float = 4.5 ## Jump velocity
+@export_range(0, 1.0, 0.1) var _acceleration_lerp_weight: float = 0.5
+@export_range(0.0, 1.0, 0.1) var _held_jump_movement_offset: float = 1.0 ## Movement Strength is multiplied by this value to slow player down while powering up jump. Default 1.0 has no change on movement strength
+
+@export_group("Jump")
+@export var _max_jump_velocity: float = 4.5 ## Jump velocity
+
+@export_subgroup("Air Control")
 @export_range(0, 1.0, 0.1) var _air_control_coefficient: float = 0.7 ## How fast the Player can move in air
 @export_range(0.1, 1.0, 0.05) var _air_control_coyote_timer: float = 0.3 ## Coyote Timer will adjust how long it takes for Movement State to change to "FALLING" and trigger air_control_coefficient
-@export_range(0, 1.0, 0.1) var _acceleration_lerp_weight: float = 0.5
 
 @export_category("Player Controller Properties")
+@export_group("Camera")
 @export_range(0.001, 0.01, 0.001) var _camera_sens: float = 0.003 ## Camera Sensitivity Coefficient
 @export_range(25.0, 70.0, 5.0) var _camera_limit_deg: float = 40.0 ## Limit camera degree to not rotate around player on X-Axis
 @export_range(0.2, 1.0, 0.1) var _camera_lag_weight: float = 0.2 ## Lerps Camera Pivot Node onto correct Player position. A lower weight will increase Lag. Capped to not allow player to run past SpringArm
@@ -27,32 +33,47 @@ const JUMP_VELOCITY = 4.5
 @onready var anim_state_machine = animation_tree.get("parameters/playback")
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var camera_3d: Camera3D = %Camera3D
+@onready var jump_timer: Timer = %JumpTimer
 
 ## Variable Player Movement properties
 ## var _run_tilt: float = 0.0
 var _movement_strength: float = 0.0
 var _movement_state: MOVEMENT_STATE
+var _jump_velocity: float = 5.0
+var _held_jump_timer: float = 0.0
 
 ## Data vis 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
 
 func _input(event: InputEvent) -> void:
 	## Handle Camera Movement
 	_camera_control(event)
-	
-	## Handle Jump
-	if event.is_action_pressed("jump") and is_on_floor():
-		velocity.y = _jump_velocity
-		jump.emit()
-		_movement_state = MOVEMENT_STATE.JUMP
-		await get_tree().create_timer(_air_control_coyote_timer).timeout
-		_movement_state = MOVEMENT_STATE.FALL
+
+	### Handle Jump
+	#if event.is_action_pressed("jump") and is_on_floor():
+		#jump_timer.start()
+		#_held_jump_timer = 0.0
+	#if event.is_action_released("jump") and is_on_floor() and !jump_timer.is_stopped():
+		#_held_jump_timer = jump_timer.wait_time - jump_timer.time_left
+		#_jump_velocity = _held_jump_timer * 12.0
+		#jump_timer.stop()
+		#if _jump_velocity < 5.0:
+			#_jump_velocity = 5.0
+		#elif _jump_velocity > _max_jump_velocity:
+			#_jump_velocity = _max_jump_velocity
+			#
+		#print("Jump Velocity: ", _jump_velocity)
+		#_jump(_jump_velocity)
+		#_held_jump_timer = 0.0
 
 func _physics_process(delta: float) -> void:
 	## Camera lerp to player position
 	camera_pivot.global_position = lerp(camera_pivot.global_position, player_model.global_position + Vector3(0.0, 1.5,0.0), _camera_lag_weight)
+	
+		
 	
 	var input_dir := Input.get_vector("left", "right", "forward", "backward")
 	_movement_strength = Input.get_action_strength("backward") + \
@@ -67,8 +88,27 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		if _movement_state == MOVEMENT_STATE.FALL:
-			_movement_strength = lerpf(_movement_strength, _movement_strength * _air_control_coefficient, 0.1) ## Lerp this value to adjust for transittion to lower air control
-			# _movement_strength = _movement_strength * _air_control_coefficient ## Fix movement strength inline with air control while player is not grounded
+			# _movement_strength = lerpf(_movement_strength, _movement_strength * _air_control_coefficient, 1.0) ## Lerp this value to adjust for transition to lower air control
+			_movement_strength = _movement_strength * _air_control_coefficient ## Fix movement strength inline with air control while player is not grounded
+		
+	## Handle Jump
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		jump_timer.start()
+		_held_jump_timer = 0.0
+	if Input.is_action_just_released("jump") and is_on_floor() and !jump_timer.is_stopped():
+		jump_timer.stop()
+		print("Jump Velocity: ", _jump_velocity)
+		_jump(_jump_velocity)
+		_held_jump_timer = 0.0
+	
+	if jump_timer.time_left > 0.0:
+		_held_jump_timer = jump_timer.wait_time - jump_timer.time_left
+		_jump_velocity = _held_jump_timer * 12.0
+		
+	if _jump_velocity < 5.0:
+		_jump_velocity = 5.0
+	elif _jump_velocity > _max_jump_velocity:
+		_jump_velocity = _max_jump_velocity
 		
 	if direction:
 		## TESTING -> Still messing with Acceleration Lerp   
@@ -92,8 +132,17 @@ func _physics_process(delta: float) -> void:
 	# Animation idle-walk-run blendspace
 	var velo = get_real_velocity().length() / SPEED
 	animation_tree.set("parameters/idle-walk-run/blend_position", abs(velo))
-	
 	move_and_slide()
+
+## Player Jump - Variable based on time held
+func _jump(jump_velo: float) -> void:
+	velocity.y = jump_velo
+	print("JUMP PRESSED")
+	jump_signal.emit()
+	_jump_velocity = 5.0
+	_movement_state = MOVEMENT_STATE.JUMP
+	await get_tree().create_timer(_air_control_coyote_timer).timeout
+	_movement_state = MOVEMENT_STATE.FALL
 
 ## Handle Camera Movement
 func _camera_control(event) -> void:

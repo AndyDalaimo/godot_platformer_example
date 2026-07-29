@@ -17,15 +17,18 @@ var pc_jump_height: float
 var pc_jump_distance: Vector2
 var pc_max_floor_velocity: float
 
+## Jump timer tracker values
+var jump_timer_in_use: bool = false
+
 func _ready() -> void:
 	if player_ref:
 		pc_jump_height = _calculate_jump_height(player_ref._jump_velocity)
 		pc_jump_distance = _calculate_jump_distance(Vector2(player_ref.velocity.x, player_ref.velocity.z), player_ref._jump_velocity)
 		pc_max_floor_velocity = player_ref.SPEED
-		player_ref.connect("jump", _debug_on_jump_broadcast)
+		player_ref.connect("jump_signal", _debug_on_jump_broadcast)
 
 func _physics_process(_delta: float) -> void:
-	if debug_jump_distance:
+	if debug_jump_distance: 
 		pc_jump_distance = _calculate_jump_distance(Vector2(player_ref.velocity.x, player_ref.velocity.z), player_ref._jump_velocity)
 		debug_mesh.position = Vector3(player_ref.position.x + pc_jump_distance.x, player_ref.position.y + 1.0, player_ref.position.z + pc_jump_distance.y)
 
@@ -36,9 +39,11 @@ func _input(event: InputEvent) -> void:
 			debug_jump_distance = false
 			debug_mesh.visible = false
 		else:
+			debug_jump_timer.stop() ## Reset timer to avoid timeout signal call
 			debug_jump_distance = true
 			debug_mesh.visible = true
 
+## Method broadcasted from Player jump signal
 func _debug_on_jump_broadcast() -> void:
 	print("PlayerJumped")
 	debug_jump_distance = false
@@ -55,8 +60,9 @@ func _calculate_jump_distance(on_floor_velo: Vector2, initial_velo_y: float) -> 
 			#var rotation = fmod(absf(player_ref.player_model.rotation_degrees.y), 360.0)
 			#print("rotation: ", rotation)
 			#on_floor_velo = Vector2(5.0, 0.0)
+			
 	var total_time = (2.0 * initial_velo_y) / GRAVITY
-	return on_floor_velo * total_time 
+	return on_floor_velo * player_ref._air_control_coefficient * total_time 
 
 func _print_data_vis_values() -> void:
 	pc_jump_height = _calculate_jump_height(player_ref._jump_velocity)
