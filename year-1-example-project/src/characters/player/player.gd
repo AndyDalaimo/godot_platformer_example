@@ -8,10 +8,11 @@ enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
 @export_category("Movement Properties")
 @export var _rotation_speed: float = TAU * 2 ## How fast the player Model can rotate around 
 @export_range(0, 1.0, 0.1) var _acceleration_lerp_weight: float = 0.5
-@export_range(0.0, 1.0, 0.1) var _held_jump_movement_offset: float = 1.0 ## Movement Strength is multiplied by this value to slow player down while powering up jump. Default 1.0 has no change on movement strength
+@export_range(0.0, 1.0, 0.1) var _held_jump_movement_offset: float = 0.5 ## Movement Strength is multiplied by this value to slow player down while powering up jump. Default 1.0 has no change on movement strength
 
 @export_group("Jump")
-@export var _max_jump_velocity: float = 4.5 ## Jump velocity
+@export_range(9.0, 25.0, 1.0) var _max_jump_velocity: float = 15.0 ## Jump velocity
+@export_range(5.0, 12.0, .25) var _min_jump_velocity: float = 7.5 ## Jump velocity
 
 @export_subgroup("Air Control")
 @export_range(0, 1.0, 0.1) var _air_control_coefficient: float = 0.7 ## How fast the Player can move in air
@@ -73,8 +74,6 @@ func _physics_process(delta: float) -> void:
 	## Camera lerp to player position
 	camera_pivot.global_position = lerp(camera_pivot.global_position, player_model.global_position + Vector3(0.0, 1.5,0.0), _camera_lag_weight)
 	
-		
-	
 	var input_dir := Input.get_vector("left", "right", "forward", "backward")
 	_movement_strength = Input.get_action_strength("backward") + \
 		Input.get_action_strength("forward") + Input.get_action_strength("left") + \
@@ -94,21 +93,21 @@ func _physics_process(delta: float) -> void:
 	## Handle Jump
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		jump_timer.start()
-		_held_jump_timer = 0.0
+		_held_jump_timer = _min_jump_velocity
 	if Input.is_action_just_released("jump") and is_on_floor() and !jump_timer.is_stopped():
 		jump_timer.stop()
-		print("Jump Velocity: ", _jump_velocity)
 		_jump(_jump_velocity)
-		_held_jump_timer = 0.0
+		_held_jump_timer = _min_jump_velocity
 	
-	if jump_timer.time_left > 0.0:
-		_held_jump_timer = jump_timer.wait_time - jump_timer.time_left
-		_jump_velocity = _held_jump_timer * 12.0
-		
-	if _jump_velocity < 5.0:
-		_jump_velocity = 5.0
-	elif _jump_velocity > _max_jump_velocity:
-		_jump_velocity = _max_jump_velocity
+	## Clamp jump velo between min and max values
+	## 
+	if jump_timer.time_left > _min_jump_velocity and _jump_velocity < _max_jump_velocity and (jump_timer.wait_time - jump_timer.time_left > 0.1): 
+		_held_jump_timer = (jump_timer.wait_time - jump_timer.time_left) * 12
+		_jump_velocity = _held_jump_timer + _min_jump_velocity
+		print("Jump Velocity: ", _jump_velocity)
+	
+	if !jump_timer.is_stopped():
+		_movement_strength = _movement_strength * _held_jump_movement_offset
 		
 	if direction:
 		## TESTING -> Still messing with Acceleration Lerp   
