@@ -45,7 +45,6 @@ func _input(event: InputEvent) -> void:
 
 ## Method broadcasted from Player jump signal
 func _debug_on_jump_broadcast() -> void:
-	print("PlayerJumped")
 	debug_jump_distance = false
 	debug_jump_timer.start(3.0)
 	await debug_jump_timer.timeout

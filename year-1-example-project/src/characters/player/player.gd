@@ -2,6 +2,7 @@ class_name Player
 extends CharacterBody3D
 
 signal jump_signal
+signal ui_jump_progress_bar(value: float)
 
 enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
 
@@ -23,6 +24,9 @@ enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
 @export_range(0.001, 0.01, 0.001) var _camera_sens: float = 0.003 ## Camera Sensitivity Coefficient
 @export_range(25.0, 70.0, 5.0) var _camera_limit_deg: float = 40.0 ## Limit camera degree to not rotate around player on X-Axis
 @export_range(0.2, 1.0, 0.1) var _camera_lag_weight: float = 0.2 ## Lerps Camera Pivot Node onto correct Player position. A lower weight will increase Lag. Capped to not allow player to run past SpringArm
+
+#@export_group("UI")
+#@export var player_controller_ui: PlayerControllerUI
 
 
 const SPEED = 5.0
@@ -102,8 +106,9 @@ func _physics_process(delta: float) -> void:
 	## Clamp jump velo between min and max values
 	## 
 	if jump_timer.time_left > _min_jump_velocity and _jump_velocity < _max_jump_velocity and (jump_timer.wait_time - jump_timer.time_left > 0.1): 
-		_held_jump_timer = (jump_timer.wait_time - jump_timer.time_left) * 12
+		_held_jump_timer = (jump_timer.wait_time - jump_timer.time_left) * 6.0
 		_jump_velocity = _held_jump_timer + _min_jump_velocity
+		ui_jump_progress_bar.emit(_jump_velocity)
 		print("Jump Velocity: ", _jump_velocity)
 	
 	if !jump_timer.is_stopped():
@@ -138,7 +143,8 @@ func _jump(jump_velo: float) -> void:
 	velocity.y = jump_velo
 	print("JUMP PRESSED")
 	jump_signal.emit()
-	_jump_velocity = 5.0
+	_jump_velocity = _min_jump_velocity
+	ui_jump_progress_bar.emit(_jump_velocity)
 	_movement_state = MOVEMENT_STATE.JUMP
 	await get_tree().create_timer(_air_control_coyote_timer).timeout
 	_movement_state = MOVEMENT_STATE.FALL
