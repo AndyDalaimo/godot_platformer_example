@@ -61,7 +61,7 @@ func _calculate_jump_distance(on_floor_velo: Vector2, initial_velo_y: float) -> 
 			#on_floor_velo = Vector2(5.0, 0.0)
 			
 	var total_time = (2.0 * initial_velo_y) / GRAVITY
-	return on_floor_velo * player_ref._air_control_coefficient * total_time 
+	return on_floor_velo * total_time 
 
 func _print_data_vis_values() -> void:
 	pc_jump_height = _calculate_jump_height(player_ref._jump_velocity)
