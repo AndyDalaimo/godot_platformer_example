@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://cl2emnvhr3a8j"]
+
+[ext_resource type="Script" uid="uid://p4xbuj0p7fgo" path="res://src/components/camera_component.gd" id="1_3dcnx"]
+
+[node name="CameraComponent" type="Node3D" unique_id=1908979093]
+script = ExtResource("1_3dcnx")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="." unique_id=310022128]
+spring_length = 5.0
+
+[node name="Camera3D" type="Camera3D" parent="SpringArm3D" unique_id=913953876]
+unique_name_in_owner = true
+fov = 100.0

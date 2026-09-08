@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bo0iqnnwgtu2b"]
+
+[ext_resource type="Script" uid="uid://dhbejdnix7o4r" path="res://src/characters/composed_char/composed_character.gd" id="1_fufh8"]
+[ext_resource type="PackedScene" uid="uid://cl2emnvhr3a8j" path="res://scenes/components/camera_component.tscn" id="2_ielro"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nh0lc"]
+radius = 0.506
+height = 1.7
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_rm7t1"]
+
+[node name="ComposedCharacter" type="CharacterBody3D" unique_id=1903364723]
+script = ExtResource("1_fufh8")
+
+[node name="PlayerCollision" type="CollisionShape3D" parent="." unique_id=1763000353]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91024375, 0)
+shape = SubResource("CapsuleShape3D_nh0lc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=786047070]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_rm7t1")
+
+[node name="CameraComponent" parent="." unique_id=1908979093 node_paths=PackedStringArray("attached_Object") instance=ExtResource("2_ielro")]
+attached_Object = NodePath("../MeshInstance3D")

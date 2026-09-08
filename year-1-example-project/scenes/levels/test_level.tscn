@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c061kasapoar8"]
 
-[ext_resource type="PackedScene" uid="uid://gonnjwajp1hi" path="res://scenes/player/player.tscn" id="1_jbqir"]
+[ext_resource type="PackedScene" uid="uid://bo0iqnnwgtu2b" path="res://scenes/characters/composed_character.tscn" id="2_fr1um"]
 [ext_resource type="Material" uid="uid://cx5vlmgy8lcru" path="res://assets/materials/platform_material_3d.tres" id="2_yautc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hsoxx"]
@@ -43,10 +43,6 @@ mesh = SubResource("PlaneMesh_rm7t1")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D" unique_id=1791294302]
 shape = SubResource("ConcavePolygonShape3D_jbqir")
 
-[node name="Player" parent="." unique_id=1443877702 instance=ExtResource("1_jbqir")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07004738, 0)
-_held_jump_movement_offset = 0.7
-
 [node name="Platform" type="MeshInstance3D" parent="." unique_id=1158306738]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9881473, 1.0084758, -4.989026)
 mesh = SubResource("BoxMesh_jbqir")
@@ -76,3 +72,5 @@ surface_material_override/0 = ExtResource("2_yautc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Platform2/StaticBody3D" unique_id=582638353]
 shape = SubResource("ConcavePolygonShape3D_yautc")
+
+[node name="ComposedCharacter" parent="." unique_id=1903364723 instance=ExtResource("2_fr1um")]

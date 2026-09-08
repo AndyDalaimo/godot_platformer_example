@@ -149,7 +149,7 @@ func _jump(jump_velo: float) -> void:
 	await get_tree().create_timer(_air_control_coyote_timer).timeout
 	_movement_state = MOVEMENT_STATE.FALL
 
-## Handle Camera Movement
+### Handle Camera Movement
 func _camera_control(event) -> void:
 	if event is InputEventMouseMotion:
 		camera_pivot.rotation.y -= event.relative.x * _camera_sens
