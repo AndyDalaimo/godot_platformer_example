@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c061kasapoar8"]
 
-[ext_resource type="PackedScene" uid="uid://bo0iqnnwgtu2b" path="res://scenes/characters/composed_character.tscn" id="2_fr1um"]
+[ext_resource type="PackedScene" uid="uid://gonnjwajp1hi" path="res://scenes/player/player.tscn" id="2_fr1um"]
 [ext_resource type="Material" uid="uid://cx5vlmgy8lcru" path="res://assets/materials/platform_material_3d.tres" id="2_yautc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hsoxx"]
@@ -73,4 +73,4 @@ surface_material_override/0 = ExtResource("2_yautc")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Platform2/StaticBody3D" unique_id=582638353]
 shape = SubResource("ConcavePolygonShape3D_yautc")
 
-[node name="ComposedCharacter" parent="." unique_id=1903364723 instance=ExtResource("2_fr1um")]
+[node name="Player" parent="." unique_id=1443877702 instance=ExtResource("2_fr1um")]

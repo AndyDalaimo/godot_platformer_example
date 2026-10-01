@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://bo0iqnnwgtu2b"]
 
 [ext_resource type="Script" uid="uid://dhbejdnix7o4r" path="res://src/characters/composed_char/composed_character.gd" id="1_fufh8"]
-[ext_resource type="PackedScene" uid="uid://cl2emnvhr3a8j" path="res://scenes/components/camera_component.tscn" id="2_ielro"]
+[ext_resource type="Script" uid="uid://p4xbuj0p7fgo" path="res://src/components/camera_component.gd" id="2_0fpy5"]
+[ext_resource type="Script" uid="uid://344cgop2lwgq" path="res://src/components/movement_component.gd" id="3_0fpy5"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nh0lc"]
 radius = 0.506
@@ -20,5 +21,19 @@ shape = SubResource("CapsuleShape3D_nh0lc")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_rm7t1")
 
-[node name="CameraComponent" parent="." unique_id=1908979093 node_paths=PackedStringArray("attached_Object") instance=ExtResource("2_ielro")]
+[node name="CameraComponent" type="Node3D" parent="." unique_id=1908979093 node_paths=PackedStringArray("attached_Object")]
+script = ExtResource("2_0fpy5")
 attached_Object = NodePath("../MeshInstance3D")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraComponent" unique_id=310022128]
+spring_length = 5.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraComponent/SpringArm3D" unique_id=913953876]
+unique_name_in_owner = true
+fov = 100.0
+
+[node name="MovementComponent" type="Node" parent="." unique_id=1391488013 node_paths=PackedStringArray("character", "character_body", "character_camera")]
+script = ExtResource("3_0fpy5")
+character = NodePath("..")
+character_body = NodePath("../MeshInstance3D")
+character_camera = NodePath("../CameraComponent/SpringArm3D/Camera3D")

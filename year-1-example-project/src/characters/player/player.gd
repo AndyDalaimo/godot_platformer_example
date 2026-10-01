@@ -51,12 +51,10 @@ var _held_jump_timer: float = 0.0
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	
 
 func _input(event: InputEvent) -> void:
 	## Handle Camera Movement
 	_camera_control(event)
-
 	### Handle Jump
 	#if event.is_action_pressed("jump") and is_on_floor():
 		#jump_timer.start()
