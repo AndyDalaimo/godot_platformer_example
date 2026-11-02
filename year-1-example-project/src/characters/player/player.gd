@@ -25,6 +25,13 @@ enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
 @export_range(25.0, 70.0, 5.0) var _camera_limit_deg: float = 40.0 ## Limit camera degree to not rotate around player on X-Axis
 @export_range(0.2, 1.0, 0.1) var _camera_lag_weight: float = 0.2 ## Lerps Camera Pivot Node onto correct Player position. A lower weight will increase Lag. Capped to not allow player to run past SpringArm
 
+@export_category("Player Health Properties")
+@export_group("Health")
+@export_range(0.0, 200.0, 1.0) var _player_max_health: float = 100.0
+@export_range(0.0, 100.0, 1.0) var _player_health: float = 100.0
+@export_range(0.0, 5.0, 0.1) var _player_health_regen_value: float = 1.5
+@export_range(0.1, 2.5, 0.1) var _player_health_regen_rate: float = 1.0
+
 #@export_group("UI")
 #@export var player_controller_ui: PlayerControllerUI
 
@@ -39,6 +46,9 @@ const JUMP_VELOCITY = 4.5
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var camera_3d: Camera3D = %Camera3D
 @onready var jump_timer: Timer = %JumpTimer
+@onready var player_collision: CollisionShape3D = $PlayerCollision
+@onready var health_regen_timer: Timer = %HealthRegenTimer
+@onready var health_regen_delay_timer: Timer = %HealthRegenDelayTimer
 
 ## Variable Player Movement properties
 ## var _run_tilt: float = 0.0
@@ -51,6 +61,7 @@ var _held_jump_timer: float = 0.0
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	health_regen_timer.wait_time = _player_health_regen_rate
 
 func _input(event: InputEvent) -> void:
 	## Handle Camera Movement
@@ -154,3 +165,29 @@ func _camera_control(event) -> void:
 		camera_pivot.rotation.x -= event.relative.y * _camera_sens
 		var limit_radians = deg_to_rad(_camera_limit_deg)
 		camera_pivot.rotation.x = clampf(camera_pivot.rotation.x, -limit_radians, limit_radians)
+
+## Player Overlap for damage
+func _on_player_overlap_body_entered(body: Node3D) -> void:
+	var hit = body.owner
+	print(hit.name)
+	if hit is DamageObject:
+		print("Damage Player")
+		_player_health -= hit.damage_value
+		## Will restart the timer if damaged within Delay Window
+		print("Begin Regen Delay")
+		health_regen_delay_timer.start()
+	pass # Replace with function body.
+
+## Player can regen health after being damaged
+func _on_health_regen_timer_timeout() -> void:
+	if _player_health < _player_max_health:
+		_player_health += _player_health_regen_value
+	if _player_health >= _player_max_health:
+		_player_health = _player_max_health
+		health_regen_timer.stop()
+	print("Player Health: ", _player_health)
+
+## Only start Regen after initial delay 
+func _on_health_regen_delay_timer_timeout() -> void:
+	print("Begin Regen")
+	health_regen_timer.start()

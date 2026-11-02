@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://w4lbwg4lwkug"]
+
+[ext_resource type="Script" uid="uid://rgmgf8ytbnw1" path="res://src/components/health_component.gd" id="1_2wcl1"]
+
+[node name="HealthComponent" type="Node" unique_id=294511353]
+script = ExtResource("1_2wcl1")
+
+[node name="HealthRegenTimer" type="Timer" parent="." unique_id=300585527]
+unique_name_in_owner = true
+wait_time = 1.5
+ignore_time_scale = true
+
+[node name="HealthRegenDelayTimer" type="Timer" parent="." unique_id=11339483]
+unique_name_in_owner = true
+wait_time = 3.0
+one_shot = true
+ignore_time_scale = true
+
+[connection signal="timeout" from="HealthRegenTimer" to="." method="_on_health_regen_timer_timeout"]
+[connection signal="timeout" from="HealthRegenDelayTimer" to="." method="_on_health_regen_delay_timer_timeout"]

@@ -21,6 +21,10 @@ enum MOVEMENT_STATE {DEFAULT, GROUNDED, JUMP, FALL}
 @export_range(0, 1.0, 0.1) var _air_control_coefficient: float = 0.7 ## How fast the Player can move in air
 @export_range(0.1, 1.0, 0.05) var _air_control_coyote_timer: float = 0.3 ## Coyote Timer will adjust how long it takes for Movement State to change to "FALLING" and trigger air_control_coefficient
 
+@onready var jump_timer: Timer = %JumpTimer
+
+var _jump_velocity: float = 5.0
+var _held_jump_timer: float = 0.0
 
 var _movement_strength: float = 0.0
 var _movement_state: MOVEMENT_STATE
@@ -50,7 +54,25 @@ func _process(delta: float) -> void:
 			# _movement_strength = lerpf(_movement_strength, _movement_strength * _air_control_coefficient, 1.0) ## Lerp this value to adjust for transition to lower air control
 			_movement_strength = _movement_strength * _air_control_coefficient ## Fix movement strength inline with air control while player is not grounded
 	
-	## TODO - INSERT JUMP HERE
+	## Handle Jump
+	if Input.is_action_just_pressed("jump") and character.is_on_floor():
+		jump_timer.start()
+		_held_jump_timer = _min_jump_velocity
+	if Input.is_action_just_released("jump") and character.is_on_floor() and !jump_timer.is_stopped():
+		jump_timer.stop()
+		_jump(_jump_velocity)
+		_held_jump_timer = _min_jump_velocity
+	
+	## Clamp jump velo between min and max values
+	## 
+	if jump_timer.time_left > _min_jump_velocity and _jump_velocity < _max_jump_velocity and (jump_timer.wait_time - jump_timer.time_left > 0.1): 
+		_held_jump_timer = (jump_timer.wait_time - jump_timer.time_left) * 6.0
+		_jump_velocity = _held_jump_timer + _min_jump_velocity
+		## ui_jump_progress_bar.emit(_jump_velocity)
+		print("Jump Velocity: ", _jump_velocity)
+	
+	if !jump_timer.is_stopped():
+		_movement_strength = _movement_strength * _held_jump_movement_offset
 	
 	if direction:
 		## TESTING -> Still messing with Acceleration Lerp   
@@ -71,8 +93,20 @@ func _process(delta: float) -> void:
 		character.velocity.x = move_toward(character.velocity.x, 0, _speed)
 		character.velocity.z = move_toward(character.velocity.z, 0, _speed)
 	
-	# Animation idle-walk-run blendspace
-	#var velo = character.get_real_velocity().length() / SPEED
-	
 	character.move_and_slide() ## Called at the end of each process for physics updates
 	pass
+
+## Player Jump - Variable based on time held
+func _jump(jump_velo: float) -> void:
+	character.velocity.y = jump_velo
+	print("JUMP PRESSED")
+	##character.jump_signal.emit()
+	_jump_velocity = _min_jump_velocity
+	## ui_jump_progress_bar.emit(_jump_velocity)
+	_movement_state = MOVEMENT_STATE.JUMP
+	await get_tree().create_timer(_air_control_coyote_timer).timeout
+	_movement_state = MOVEMENT_STATE.FALL
+
+
+func _on_character_overlap_body_entered(body: Node3D) -> void:
+	pass # Replace with function body.

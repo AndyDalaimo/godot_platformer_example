@@ -2,7 +2,12 @@
 
 [ext_resource type="Script" uid="uid://dhbejdnix7o4r" path="res://src/characters/composed_char/composed_character.gd" id="1_fufh8"]
 [ext_resource type="Script" uid="uid://p4xbuj0p7fgo" path="res://src/components/camera_component.gd" id="2_0fpy5"]
-[ext_resource type="Script" uid="uid://344cgop2lwgq" path="res://src/components/movement_component.gd" id="3_0fpy5"]
+[ext_resource type="PackedScene" uid="uid://bajox1xefg7nw" path="res://scenes/components/movement_component.tscn" id="3_0fpy5"]
+[ext_resource type="PackedScene" uid="uid://w4lbwg4lwkug" path="res://scenes/components/health_component.tscn" id="4_j5jqk"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_j5jqk"]
+radius = 0.85
+height = 1.75
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nh0lc"]
 radius = 0.506
@@ -12,6 +17,13 @@ height = 1.7
 
 [node name="ComposedCharacter" type="CharacterBody3D" unique_id=1903364723]
 script = ExtResource("1_fufh8")
+
+[node name="CharacterOverlap" type="Area3D" parent="." unique_id=1013610115]
+collision_mask = 3
+
+[node name="CharacterOverlapShape" type="CollisionShape3D" parent="CharacterOverlap" unique_id=1446919547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.79371417, 0)
+shape = SubResource("CapsuleShape3D_j5jqk")
 
 [node name="PlayerCollision" type="CollisionShape3D" parent="." unique_id=1763000353]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91024375, 0)
@@ -32,8 +44,15 @@ spring_length = 5.0
 unique_name_in_owner = true
 fov = 100.0
 
-[node name="MovementComponent" type="Node" parent="." unique_id=1391488013 node_paths=PackedStringArray("character", "character_body", "character_camera")]
-script = ExtResource("3_0fpy5")
+[node name="MovementComponent" parent="." unique_id=1391488013 node_paths=PackedStringArray("character", "character_body", "character_camera") instance=ExtResource("3_0fpy5")]
 character = NodePath("..")
 character_body = NodePath("../MeshInstance3D")
 character_camera = NodePath("../CameraComponent/SpringArm3D/Camera3D")
+_speed = 12.0
+_acceleration_lerp_weight = 1.0
+_held_jump_movement_offset = 0.6
+_max_jump_velocity = 25.0
+_min_jump_velocity = 5.0
+
+[node name="HealthComponent" parent="." unique_id=294511353 node_paths=PackedStringArray("character_overlap") instance=ExtResource("4_j5jqk")]
+character_overlap = NodePath("../CharacterOverlap")

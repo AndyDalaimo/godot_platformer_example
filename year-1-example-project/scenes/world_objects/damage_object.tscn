@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://bo3k66v035ap7"]
+
+[ext_resource type="Script" uid="uid://cuhblexy72bip" path="res://src/world_objects/damage_object.gd" id="1_2jx4n"]
+[ext_resource type="PackedScene" uid="uid://cocwpdf480c73" path="res://scenes/components/damage_component.tscn" id="2_vgxjg"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_rm7t1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jt8ty"]
+albedo_color = Color(1, 0, 0.11372549, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_rm7t1"]
+
+[node name="DamageObject" type="Node3D" unique_id=362017233 groups=["Damage"]]
+script = ExtResource("1_2jx4n")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=597974500]
+mesh = SubResource("SphereMesh_rm7t1")
+surface_material_override/0 = SubResource("StandardMaterial3D_jt8ty")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=92303882]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=530899170]
+shape = SubResource("SphereShape3D_rm7t1")
+
+[node name="DamageComponent" parent="." unique_id=373578044 instance=ExtResource("2_vgxjg")]

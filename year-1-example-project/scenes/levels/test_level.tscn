@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://c061kasapoar8"]
 
-[ext_resource type="PackedScene" uid="uid://gonnjwajp1hi" path="res://scenes/player/player.tscn" id="2_fr1um"]
 [ext_resource type="Material" uid="uid://cx5vlmgy8lcru" path="res://assets/materials/platform_material_3d.tres" id="2_yautc"]
+[ext_resource type="PackedScene" uid="uid://bo3k66v035ap7" path="res://scenes/world_objects/damage_object.tscn" id="3_fr1um"]
+[ext_resource type="PackedScene" uid="uid://bo0iqnnwgtu2b" path="res://scenes/characters/composed_character.tscn" id="3_v45ci"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hsoxx"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -49,6 +50,7 @@ mesh = SubResource("BoxMesh_jbqir")
 surface_material_override/0 = ExtResource("2_yautc")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Platform" unique_id=291517528]
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Platform/StaticBody3D" unique_id=786258695]
 shape = SubResource("ConcavePolygonShape3D_yautc")
@@ -73,4 +75,8 @@ surface_material_override/0 = ExtResource("2_yautc")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Platform2/StaticBody3D" unique_id=582638353]
 shape = SubResource("ConcavePolygonShape3D_yautc")
 
-[node name="Player" parent="." unique_id=1443877702 instance=ExtResource("2_fr1um")]
+[node name="ComposedCharacter" parent="." unique_id=1903364723 instance=ExtResource("3_v45ci")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98066974, 0, 3.501522)
+
+[node name="DamageObject" parent="." unique_id=362017233 instance=ExtResource("3_fr1um")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0019593, 0.5, -0.23693013)

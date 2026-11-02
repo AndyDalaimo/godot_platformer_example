@@ -37,6 +37,10 @@ folder_colors={
 "res://scenes/": "purple"
 }
 
+[global_group]
+
+Damage="Scenes in this group will 'Damage' those with HealthComponents. Scenes in this group should contain their own DamageComponent"
+
 [input]
 
 forward={
