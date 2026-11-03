@@ -50,7 +50,6 @@ mesh = SubResource("BoxMesh_jbqir")
 surface_material_override/0 = ExtResource("2_yautc")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Platform" unique_id=291517528]
-collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Platform/StaticBody3D" unique_id=786258695]
 shape = SubResource("ConcavePolygonShape3D_yautc")

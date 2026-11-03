@@ -106,7 +106,3 @@ func _jump(jump_velo: float) -> void:
 	_movement_state = MOVEMENT_STATE.JUMP
 	await get_tree().create_timer(_air_control_coyote_timer).timeout
 	_movement_state = MOVEMENT_STATE.FALL
-
-
-func _on_character_overlap_body_entered(body: Node3D) -> void:
-	pass # Replace with function body.

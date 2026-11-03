@@ -12,8 +12,8 @@ extends Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	character_overlap.body_entered.connect(_on_damage)
-	pass # Replace with function body.
+	if character_overlap:
+		character_overlap.body_entered.connect(_on_damage)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -38,9 +38,8 @@ func _on_damage(body: Node3D) -> void:
 
 func _on_health_regen_timer_timeout() -> void:
 	if _health < _max_health:
-		_health += _health_regen_value
-	if _health >= _max_health:
-		_health = _max_health
+		_health = clampf(_health + _health_regen_value, 0, _max_health)
+	if _health == _max_health:
 		health_regen_timer.stop()
 	print("Owner Health: ", _health)
 
